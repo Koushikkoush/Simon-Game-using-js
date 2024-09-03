@@ -12,7 +12,7 @@ document.addEventListener("click", function(event) {
     if (!started) {
         console.log("Game started");
         started = true;
-        levelUp();
+        h2.innerText = "Your turn! Click a button to start.";
     }
 });
 
@@ -34,12 +34,21 @@ function levelUp() {
     userSeq = [];
     level++;
     h2.innerText = `Level ${level}`;
+    
+    // Generate random color only after user input
     let randIndex = Math.floor(Math.random() * btns.length);
     let randColor = btns[randIndex];
-    let randBtn = document.querySelector(`.${randColor}`);
     gameSeq.push(randColor);
-    console.log(gameSeq);
-    setTimeout(() => btnFlash(randBtn), 500); // Delay flash to avoid immediate input
+    
+    // Flash all colors in the current sequence
+    gameSeq.forEach((color, index) => {
+        setTimeout(() => {
+            let randBtn = document.querySelector(`.${color}`);
+            btnFlash(randBtn);
+        }, (index + 1) * 500);
+    });
+
+    console.log("Game Sequence:", gameSeq);
 }
 
 function checkAnswer() {
@@ -63,14 +72,20 @@ function checkAnswer() {
 }
 
 function btnPress() {
-    if (!started) return; // Prevent button press before the game starts
+    if (!started) return;
 
     let btn = this;
     userFlash(btn);
 
     let userColor = btn.getAttribute("class").split(' ')[1];
     userSeq.push(userColor);
-    checkAnswer();
+
+    if (userSeq.length === 1 && gameSeq.length === 0) {
+        gameSeq.push(userColor); // Add user's first input to the sequence
+        setTimeout(levelUp, 1000); // Generate next sequence after user's input
+    } else {
+        checkAnswer();
+    }
 }
 
 let allBtns = document.querySelectorAll(".btn");
