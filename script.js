@@ -14,7 +14,20 @@ document.addEventListener("click", function(event) {
         console.log("Game started");
         started = true;
         levelUp();
+        setTimeout(enableButtons, 1000); // Enable buttons after 1 second
     }
+});
+
+function enableButtons() {
+    let allBtns = document.querySelectorAll(".btn");
+    allBtns.forEach(function(btn) {
+        btn.disabled = false; // Enable buttons after game starts
+    });
+}
+
+// Disable buttons initially
+document.querySelectorAll(".btn").forEach(function(btn) {
+    btn.disabled = true;
 });
 
 function btnFlash(btn) {
@@ -53,7 +66,7 @@ function checkAnswer() {
         if (level > highScore) {
             highScore = level - 1; // Update high score before resetting
         }
-        h2.innerHTML = `Game Over! Your score: <b>${level - 1}</b><br>High Score: <b>${highScore}</b><br>Press any key to restart.`;
+        h2.innerHTML = `Game Over! Your score: <b>${level - 1}</b><br>High Score: <b>${highScore}</b><br>Tap anywhere to restart.`;
         document.querySelector("body").style.backgroundColor = "red";
         setTimeout(function(){
             document.querySelector("body").style.backgroundColor = "white";
@@ -82,4 +95,8 @@ function reset() {
     userSeq = [];
     gameSeq = [];
     level = 0;
+
+    document.querySelectorAll(".btn").forEach(function(btn) {
+        btn.disabled = true; // Disable buttons on reset
+    });
 }
