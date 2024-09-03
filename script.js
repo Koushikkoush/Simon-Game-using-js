@@ -3,10 +3,9 @@ let userSeq = [];
 
 let started = false;
 let level = 0;
-let highScore = 0; // Declare the highScore variable
+let highScore = 0;
 
 let btns = ["red", "yellow", "green", "blue"];
-
 let h2 = document.querySelector("h2");
 
 document.addEventListener("click", function(event) {
@@ -14,20 +13,7 @@ document.addEventListener("click", function(event) {
         console.log("Game started");
         started = true;
         levelUp();
-        setTimeout(enableButtons, 1000); // Enable buttons after 1 second
     }
-});
-
-function enableButtons() {
-    let allBtns = document.querySelectorAll(".btn");
-    allBtns.forEach(function(btn) {
-        btn.disabled = false; // Enable buttons after game starts
-    });
-}
-
-// Disable buttons initially
-document.querySelectorAll(".btn").forEach(function(btn) {
-    btn.disabled = true;
 });
 
 function btnFlash(btn) {
@@ -53,22 +39,22 @@ function levelUp() {
     let randBtn = document.querySelector(`.${randColor}`);
     gameSeq.push(randColor);
     console.log(gameSeq);
-    btnFlash(randBtn);
-}   
+    setTimeout(() => btnFlash(randBtn), 500); // Delay flash to avoid immediate input
+}
 
 function checkAnswer() {
-    let idx = userSeq.length - 1; // Use userSeq length to check each user input step by step
+    let idx = userSeq.length - 1;
     if (userSeq[idx] === gameSeq[idx]) {
         if (userSeq.length === gameSeq.length) {
             setTimeout(levelUp, 1000);
         }
     } else {
         if (level > highScore) {
-            highScore = level - 1; // Update high score before resetting
+            highScore = level - 1;
         }
         h2.innerHTML = `Game Over! Your score: <b>${level - 1}</b><br>High Score: <b>${highScore}</b><br>Tap anywhere to restart.`;
         document.querySelector("body").style.backgroundColor = "red";
-        setTimeout(function(){
+        setTimeout(function() {
             document.querySelector("body").style.backgroundColor = "white";
         }, 150);
 
@@ -77,10 +63,12 @@ function checkAnswer() {
 }
 
 function btnPress() {
+    if (!started) return; // Prevent button press before the game starts
+
     let btn = this;
     userFlash(btn);
 
-    let userColor = btn.getAttribute("class").split(' ')[1]; // Get the color from the class
+    let userColor = btn.getAttribute("class").split(' ')[1];
     userSeq.push(userColor);
     checkAnswer();
 }
@@ -95,8 +83,4 @@ function reset() {
     userSeq = [];
     gameSeq = [];
     level = 0;
-
-    document.querySelectorAll(".btn").forEach(function(btn) {
-        btn.disabled = true; // Disable buttons on reset
-    });
 }
