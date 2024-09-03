@@ -1,102 +1,102 @@
-let gameSeq = [];
-let userSeq = [];
-
+// Game variables
+let gameSequence = [];
+let userSequence = [];
 let started = false;
 let level = 0;
 let highScore = 0;
 
-let btns = ["red", "yellow", "green", "blue"];
-let h2 = document.querySelector("h2");
-let startButton = document.querySelector("#start-btn");
+// DOM elements
+const buttons = ["red", "yellow", "green", "blue"];
+const heading = document.querySelector("h2");
+const startButton = document.querySelector("#start-btn");
+const allButtons = document.querySelectorAll(".btn");
 
 // Start the game when the start button is clicked
-startButton.addEventListener("click", function() {
-    if (!started) {
-        startButton.style.display = "none"; // Hide the start button
-        started = true;
-        levelUp();
-    }
+startButton.addEventListener("click", () => {
+  if (!started) {
+    startButton.style.display = "none"; // Hide the start button
+    started = true;
+    levelUp();
+  }
 });
 
-function btnFlash(btn) {
-    btn.classList.add("flash");
-    setTimeout(function() {
-        btn.classList.remove("flash");
-    }, 250);
+// Function to flash a button
+function flashButton(button, className) {
+  button.classList.add(className);
+  setTimeout(() => {
+    button.classList.remove(className);
+  }, 250);
 }
 
-function userFlash(btn) {
-    btn.classList.add("userflash");
-    setTimeout(function() {
-        btn.classList.remove("userflash");
-    }, 250);
-}
-
+// Function to level up
 function levelUp() {
-    userSeq = [];
-    level++;
-    h2.innerText = `Level ${level}`;
-    
-    // Generate a random color and add it to the game sequence
-    let randIndex = Math.floor(Math.random() * btns.length);
-    let randColor = btns[randIndex];
-    gameSeq.push(randColor);
-    
-    // Display the full sequence to the user
-    let i = 0;
-    function displaySequence() {
-        if (i < gameSeq.length) {
-            let randBtn = document.querySelector(`.${gameSeq[i]}`);
-            btnFlash(randBtn);
-            i++;
-            setTimeout(displaySequence, 500);
-        }
+  userSequence = [];
+  level++;
+  heading.innerText = `Level ${level}`;
+
+  // Generate a random color and add it to the game sequence
+  const randomIndex = Math.floor(Math.random() * buttons.length);
+  const randomColor = buttons[randomIndex];
+  gameSequence.push(randomColor);
+
+  // Display the full sequence to the user
+  let i = 0;
+  function displaySequence() {
+    if (i < gameSequence.length) {
+      const button = document.querySelector(`.${gameSequence[i]}`);
+      flashButton(button, "flash");
+      i++;
+      setTimeout(displaySequence, 500);
     }
-    displaySequence();
+  }
+  displaySequence();
 }
 
+// Function to check the user's answer
 function checkAnswer() {
-    let idx = userSeq.length - 1;
-    if (userSeq[idx] === gameSeq[idx]) {
-        if (userSeq.length === gameSeq.length) {
-            setTimeout(levelUp, 1000); // Move to the next level
-        }
-    } else {
-        // Game over, update the high score if necessary
-        if (level > highScore) {
-            highScore = level - 1;
-        }
-        h2.innerHTML = `Game Over! Your score: <b>${level - 1}</b><br>High Score: <b>${highScore}</b><br>Tap "Start" to play again.`;
-        document.querySelector("body").style.backgroundColor = "red";
-        setTimeout(function() {
-            document.querySelector("body").style.backgroundColor = "white";
-        }, 150);
-
-        reset();
+  const idx = userSequence.length - 1;
+  if (userSequence[idx] === gameSequence[idx]) {
+    if (userSequence.length === gameSequence.length) {
+      setTimeout(levelUp, 1000); // Move to the next level
     }
+  } else {
+    // Game over, update the high score if necessary
+    if (level > highScore) {
+      highScore = level - 1;
+    }
+    heading.innerHTML = `Game Over! Your score: <b>${level - 1}</b><br>High Score: <b>${highScore}</b><br>Tap "Start" to play again.`;
+    document.querySelector("body").style.backgroundColor = "red";
+    setTimeout(() => {
+      document.querySelector("body").style.backgroundColor = "white";
+    }, 150);
+
+    reset();
+  }
 }
 
-function btnPress() {
-    if (!started) return;
+// Function to handle button press
+function buttonPress() {
+  if (!started) return;
 
-    let btn = this;
-    userFlash(btn);
+  const button = this;
+  flashButton(button, "userflash");
 
-    let userColor = btn.getAttribute("class").split(' ')[1];
-    userSeq.push(userColor);
+  const userColor = button.getAttribute("class").split(" ")[1];
+  userSequence.push(userColor);
 
-    checkAnswer();
+  checkAnswer();
 }
 
-let allBtns = document.querySelectorAll(".btn");
-allBtns.forEach(function(btn) {
-    btn.addEventListener("click", btnPress);
+// Add event listeners to all buttons
+allButtons.forEach((button) => {
+  button.addEventListener("click", buttonPress);
 });
 
+// Function to reset the game
 function reset() {
-    started = false;
-    userSeq = [];
-    gameSeq = [];
-    level = 0;
-    startButton.style.display = "block"; // Show the start button again
+  started = false;
+  userSequence = [];
+  gameSequence = [];
+  level = 0;
+  startButton.style.display = "block"; // Show the start button again
 }
